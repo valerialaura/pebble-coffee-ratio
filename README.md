@@ -4,6 +4,12 @@ A coffee-to-water ratio calculator for the Pebble 2 Duo.
 
 When making pour-over coffee, you measure beans loosely ("around 20 grams") and need to quickly calculate the corresponding water amount. This app puts that calculation on your wrist -- no more grabbing your phone for a calculator.
 
+<p align="center">
+  <img src="app-menu-icon.jpeg" alt="App menu icon" width="144">
+  &nbsp;&nbsp;
+  <img src="coffee-ratio-calculator.jpeg" alt="Coffee ratio calculator" width="144">
+</p>
+
 ## Features
 
 - **Two-value display**: coffee (g) and water (ml), always in sync
