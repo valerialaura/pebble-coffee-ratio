@@ -1,2 +1,4 @@
 build/
 emulator-screenshot*.png
+.DS_Store
+.lock-waf_darwin_build
