@@ -1,0 +1,20 @@
+{
+  "name": "coffee-ratio",
+  "author": "valerialaura",
+  "version": "1.0.0",
+  "pebble": {
+    "displayName": "Coffee Ratio",
+    "uuid": "a1b2c3d4-e5f6-7890-abcd-ef1234567890",
+    "sdkVersion": "3",
+    "enableMultiJS": false,
+    "targetPlatforms": [
+      "diorite"
+    ],
+    "watchapp": {
+      "watchface": false
+    },
+    "resources": {
+      "media": []
+    }
+  }
+}
