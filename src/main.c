@@ -107,11 +107,7 @@ static void update_display(void) {
   // Coffee value (units shown in label, LECO font is numbers-only)
   int whole = s_coffee_cg / 100;
   int frac = (s_coffee_cg % 100) / 10;
-  if (s_focus == FOCUS_COFFEE) {
-    snprintf(s_coffee_buf, sizeof(s_coffee_buf), "%d", whole);
-  } else {
-    snprintf(s_coffee_buf, sizeof(s_coffee_buf), "%d.%d", whole, frac);
-  }
+  snprintf(s_coffee_buf, sizeof(s_coffee_buf), "%d.%d", whole, frac);
   text_layer_set_text(s_coffee_value_layer, s_coffee_buf);
 
   // Water value
@@ -212,9 +208,8 @@ static void select_click_handler(ClickRecognizerRef recognizer, void *context) {
     return;
   }
 
-  // Toggle focus
+  // Toggle focus (don't recalculate — values stay as they are)
   s_focus = (s_focus == FOCUS_COFFEE) ? FOCUS_WATER : FOCUS_COFFEE;
-  recalculate();
   update_display();
 }
 
