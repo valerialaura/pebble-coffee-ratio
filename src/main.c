@@ -12,7 +12,7 @@
 #define MAX_COFFEE         100
 #define MIN_WATER          100
 #define MAX_WATER          2500
-#define WATER_STEP         10
+#define WATER_STEP         1
 
 typedef enum {
   FOCUS_COFFEE,
