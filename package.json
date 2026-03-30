@@ -3,8 +3,8 @@
   "author": "valerialaura",
   "version": "1.0.0",
   "pebble": {
-    "displayName": "Coffee Ratio",
-    "uuid": "a1b2c3d4-e5f6-7890-abcd-ef1234567890",
+    "displayName": "Simple Coffee Ratio Calculator",
+    "uuid": "051cfe11-64e4-4da0-ab92-9d2c93bd8fb4",
     "sdkVersion": "3",
     "enableMultiJS": false,
     "targetPlatforms": [
