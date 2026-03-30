@@ -12,7 +12,7 @@
 #define MAX_COFFEE         100
 #define MIN_WATER          100
 #define MAX_WATER          2500
-#define WATER_STEP         1
+#define ACCEL_THRESHOLD    14  // ticks before accelerating (14 * 100ms = ~1.4s)
 
 typedef enum {
   FOCUS_COFFEE,
@@ -25,6 +25,8 @@ static int s_coffee_cg;  // coffee in centigrams (e.g. 2000 = 20.0g) for decimal
 static int s_water_ml;
 static Focus s_focus = FOCUS_COFFEE;
 static bool s_editing_ratio = false;
+static int s_repeat_count = 0;
+static int s_last_button = -1;
 
 // --- UI ---
 static Window *s_main_window;
@@ -163,6 +165,20 @@ static void update_display(void) {
   layer_mark_dirty(s_water_bg_layer);
 }
 
+// --- Acceleration helper ---
+static void track_repeat(int button_id) {
+  if (s_last_button == button_id) {
+    s_repeat_count++;
+  } else {
+    s_repeat_count = 1;
+    s_last_button = button_id;
+  }
+}
+
+static bool is_accelerated(void) {
+  return s_repeat_count > ACCEL_THRESHOLD;
+}
+
 // --- Button handlers ---
 static void up_click_handler(ClickRecognizerRef recognizer, void *context) {
   if (s_editing_ratio) {
@@ -172,10 +188,15 @@ static void up_click_handler(ClickRecognizerRef recognizer, void *context) {
     return;
   }
 
+  track_repeat(BUTTON_ID_UP);
   if (s_focus == FOCUS_COFFEE) {
-    if (s_coffee_cg < MAX_COFFEE * 100) s_coffee_cg += 100; // +1g
+    int step = is_accelerated() ? 100 : 10; // 1g or 0.1g
+    if (s_coffee_cg < MAX_COFFEE * 100) s_coffee_cg += step;
+    if (s_coffee_cg > MAX_COFFEE * 100) s_coffee_cg = MAX_COFFEE * 100;
   } else {
-    if (s_water_ml < MAX_WATER) s_water_ml += WATER_STEP;
+    int step = is_accelerated() ? 10 : 1;   // 10ml or 1ml
+    if (s_water_ml < MAX_WATER) s_water_ml += step;
+    if (s_water_ml > MAX_WATER) s_water_ml = MAX_WATER;
   }
   recalculate();
   update_display();
@@ -189,10 +210,15 @@ static void down_click_handler(ClickRecognizerRef recognizer, void *context) {
     return;
   }
 
+  track_repeat(BUTTON_ID_DOWN);
   if (s_focus == FOCUS_COFFEE) {
-    if (s_coffee_cg > MIN_COFFEE * 100) s_coffee_cg -= 100; // -1g
+    int step = is_accelerated() ? 100 : 10; // 1g or 0.1g
+    if (s_coffee_cg > MIN_COFFEE * 100) s_coffee_cg -= step;
+    if (s_coffee_cg < MIN_COFFEE * 100) s_coffee_cg = MIN_COFFEE * 100;
   } else {
-    if (s_water_ml > MIN_WATER) s_water_ml -= WATER_STEP;
+    int step = is_accelerated() ? 10 : 1;   // 10ml or 1ml
+    if (s_water_ml > MIN_WATER) s_water_ml -= step;
+    if (s_water_ml < MIN_WATER) s_water_ml = MIN_WATER;
   }
   recalculate();
   update_display();
@@ -236,8 +262,8 @@ static void back_click_handler(ClickRecognizerRef recognizer, void *context) {
 }
 
 static void click_config_provider(void *context) {
-  window_single_repeating_click_subscribe(BUTTON_ID_UP, 150, up_click_handler);
-  window_single_repeating_click_subscribe(BUTTON_ID_DOWN, 150, down_click_handler);
+  window_single_repeating_click_subscribe(BUTTON_ID_UP, 100, up_click_handler);
+  window_single_repeating_click_subscribe(BUTTON_ID_DOWN, 100, down_click_handler);
   window_single_click_subscribe(BUTTON_ID_SELECT, select_click_handler);
   window_long_click_subscribe(BUTTON_ID_SELECT, 500, select_long_click_handler, NULL);
   window_single_click_subscribe(BUTTON_ID_BACK, back_click_handler);
