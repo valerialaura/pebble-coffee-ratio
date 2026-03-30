@@ -1,4 +1,4 @@
-# Coffee Ratio
+# Simple Coffee Ratio Calculator
 
 A coffee-to-water ratio calculator for the Pebble 2 Duo.
 
