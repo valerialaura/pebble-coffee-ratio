@@ -10,6 +10,9 @@ When making pour-over coffee, you measure beans loosely ("around 20 grams") and 
   <img src="coffee-ratio-calculator.jpeg" alt="Coffee ratio calculator" width="144">
 </p>
 
+## Want to install it on your watch?  
+head over to the [store](https://apps.rebble.io/en_US/application/69c9ca0340411f0009fd69a9)! 
+
 ## Features
 
 - **Two-value display**: coffee (g) and water (ml), always in sync
