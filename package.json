@@ -1,13 +1,14 @@
 {
   "name": "coffee-ratio",
   "author": "valerialaura",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "pebble": {
     "displayName": "Simple Coffee Ratio Calculator",
     "uuid": "051cfe11-64e4-4da0-ab92-9d2c93bd8fb4",
     "sdkVersion": "3",
     "enableMultiJS": false,
     "targetPlatforms": [
+      "basalt",
       "diorite"
     ],
     "watchapp": {

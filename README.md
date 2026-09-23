@@ -50,4 +50,9 @@ pebble install --phone <IP>          # physical watch
 
 ## Platform
 
-Currently targets **diorite** (Pebble 2). The 144x168 B&W layout should work on aplite and basalt with minimal changes. Chalk (round) would need layout adjustments.
+Supported watches:
+
+- **Pebble 2 / Pebble 2 Duo** (diorite)
+- **Pebble Time / Pebble Time Steel** (basalt)
+
+Both have a 144x168 screen, so they share the same layout. Emery (Pebble Time 2) and chalk (round) would need layout adjustments.
