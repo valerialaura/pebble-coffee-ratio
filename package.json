@@ -1,7 +1,7 @@
 {
   "name": "coffee-ratio",
   "author": "valerialaura",
-  "version": "1.1.0",
+  "version": "1.1.1",
   "pebble": {
     "displayName": "Simple Coffee Ratio Calculator",
     "uuid": "051cfe11-64e4-4da0-ab92-9d2c93bd8fb4",
@@ -16,13 +16,13 @@
     },
     "resources": {
       "media": [
-      {
-        "type": "bitmap",
-        "name": "MENU_ICON",
-        "file": "images/icon.png",
-        "menuIcon": true
-      }
-    ]
+        {
+          "type": "bitmap",
+          "name": "MENU_ICON",
+          "file": "images/icon.png",
+          "menuIcon": true
+        }
+      ]
     }
   }
 }

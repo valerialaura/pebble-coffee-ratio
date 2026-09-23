@@ -25,8 +25,6 @@ static int s_coffee_cg;  // coffee in centigrams (e.g. 2000 = 20.0g) for decimal
 static int s_water_ml;
 static Focus s_focus = FOCUS_COFFEE;
 static bool s_editing_ratio = false;
-static int s_repeat_count = 0;
-static int s_last_button = -1;
 
 // --- UI ---
 static Window *s_main_window;
@@ -84,16 +82,21 @@ static void water_bg_update_proc(Layer *layer, GContext *ctx) {
 }
 
 // --- Recalculation ---
+// Round centigrams to the nearest 0.1g so the stored value always matches the display
+static int round_to_tenth_gram(int cg) {
+  return ((cg + 5) / 10) * 10;
+}
+
 static void recalculate(void) {
   if (s_focus == FOCUS_COFFEE) {
-    // Water = coffee * ratio
-    s_water_ml = (s_coffee_cg * s_ratio) / 100;
+    // Water = coffee * ratio, rounded to the nearest ml
+    s_water_ml = (s_coffee_cg * s_ratio + 50) / 100;
     // Clamp water
     if (s_water_ml > MAX_WATER) s_water_ml = MAX_WATER;
     if (s_water_ml < MIN_WATER) s_water_ml = MIN_WATER;
   } else {
-    // Coffee = water / ratio (store as centigrams for 1 decimal)
-    s_coffee_cg = (s_water_ml * 100) / s_ratio;
+    // Coffee = water / ratio, rounded to the nearest 0.1g
+    s_coffee_cg = ((s_water_ml * 10 + s_ratio / 2) / s_ratio) * 10;
     // Clamp coffee
     if (s_coffee_cg > MAX_COFFEE * 100) s_coffee_cg = MAX_COFFEE * 100;
     if (s_coffee_cg < MIN_COFFEE * 100) s_coffee_cg = MIN_COFFEE * 100;
@@ -166,17 +169,9 @@ static void update_display(void) {
 }
 
 // --- Acceleration helper ---
-static void track_repeat(int button_id) {
-  if (s_last_button == button_id) {
-    s_repeat_count++;
-  } else {
-    s_repeat_count = 1;
-    s_last_button = button_id;
-  }
-}
-
-static bool is_accelerated(void) {
-  return s_repeat_count > ACCEL_THRESHOLD;
+// The click count resets on every new press, so only a continuous hold accelerates
+static bool is_accelerated(ClickRecognizerRef recognizer) {
+  return click_number_of_clicks_counted(recognizer) > ACCEL_THRESHOLD;
 }
 
 // --- Button handlers ---
@@ -188,13 +183,12 @@ static void up_click_handler(ClickRecognizerRef recognizer, void *context) {
     return;
   }
 
-  track_repeat(BUTTON_ID_UP);
   if (s_focus == FOCUS_COFFEE) {
-    int step = is_accelerated() ? 100 : 10; // 1g or 0.1g
+    int step = is_accelerated(recognizer) ? 100 : 10; // 1g or 0.1g
     if (s_coffee_cg < MAX_COFFEE * 100) s_coffee_cg += step;
     if (s_coffee_cg > MAX_COFFEE * 100) s_coffee_cg = MAX_COFFEE * 100;
   } else {
-    int step = is_accelerated() ? 10 : 1;   // 10ml or 1ml
+    int step = is_accelerated(recognizer) ? 10 : 1;   // 10ml or 1ml
     if (s_water_ml < MAX_WATER) s_water_ml += step;
     if (s_water_ml > MAX_WATER) s_water_ml = MAX_WATER;
   }
@@ -210,13 +204,12 @@ static void down_click_handler(ClickRecognizerRef recognizer, void *context) {
     return;
   }
 
-  track_repeat(BUTTON_ID_DOWN);
   if (s_focus == FOCUS_COFFEE) {
-    int step = is_accelerated() ? 100 : 10; // 1g or 0.1g
+    int step = is_accelerated(recognizer) ? 100 : 10; // 1g or 0.1g
     if (s_coffee_cg > MIN_COFFEE * 100) s_coffee_cg -= step;
     if (s_coffee_cg < MIN_COFFEE * 100) s_coffee_cg = MIN_COFFEE * 100;
   } else {
-    int step = is_accelerated() ? 10 : 1;   // 10ml or 1ml
+    int step = is_accelerated(recognizer) ? 10 : 1;   // 10ml or 1ml
     if (s_water_ml > MIN_WATER) s_water_ml -= step;
     if (s_water_ml < MIN_WATER) s_water_ml = MIN_WATER;
   }
@@ -353,6 +346,8 @@ static void init(void) {
   // Load persisted values
   s_ratio = persist_exists(PERSIST_KEY_RATIO) ? persist_read_int(PERSIST_KEY_RATIO) : DEFAULT_RATIO;
   s_coffee_cg = persist_exists(PERSIST_KEY_COFFEE) ? persist_read_int(PERSIST_KEY_COFFEE) : DEFAULT_COFFEE * 100;
+  // Values saved by older versions may have extra hundredths
+  s_coffee_cg = round_to_tenth_gram(s_coffee_cg);
 
   s_main_window = window_create();
   window_set_window_handlers(s_main_window, (WindowHandlers) {
