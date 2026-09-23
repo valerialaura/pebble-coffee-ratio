@@ -1,6 +1,6 @@
 # Simple Coffee Ratio Calculator
 
-A coffee-to-water ratio calculator for the Pebble 2 Duo.
+A coffee-to-water ratio calculator for the Pebble 2, Pebble 2 Duo, Pebble Time and Pebble Time Steel.
 
 When making pour-over coffee, you measure beans loosely ("around 20 grams") and need to quickly calculate the corresponding water amount. This app puts that calculation on your wrist -- no more grabbing your phone for a calculator.
 
@@ -17,11 +17,11 @@ head over to the [store](https://apps.rebble.io/en_US/application/69c9ca0340411f
 
 - **Two-value display**: coffee (g) and water (ml), always in sync
 - **Toggle focus**: press Select to switch between adjusting coffee or water
-- **Coffee**: adjusts by 1g (range 10-100g)
-- **Water**: adjusts by 10ml (range 100-2500ml)
+- **Coffee**: adjusts by 0.1g (range 10-100g)
+- **Water**: adjusts by 1ml (range 100-2500ml)
 - **Ratio editing**: long-press Select to change the ratio (10-25), with live preview of recalculated values
 - **Persistent storage**: ratio and last coffee weight are remembered across sessions
-- **Hold to scroll**: hold Up/Down to quickly adjust values
+- **Hold to speed up**: hold Up/Down for about a second and a half to switch to bigger steps (1g / 10ml)
 
 ## Default values
 
@@ -44,7 +44,8 @@ Requires the [Pebble SDK](https://developer.rebble.io/sdk/).
 
 ```bash
 pebble build
-pebble install --emulator diorite    # emulator
+pebble install --emulator diorite    # Pebble 2 emulator
+pebble install --emulator basalt     # Pebble Time emulator
 pebble install --phone <IP>          # physical watch
 ```
 
